@@ -1,0 +1,221 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyOx0LcuvFd/YKE5NkFArYvA",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Arshad4610/CS/blob/main/ANOVA-1%2C2\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 14,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "KFDOR1vaEbAn",
+        "outputId": "fd72ccfd-6fc7-4eea-ebc8-4676cce83feb"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "no.of treatments:3\n",
+            "90,82,79,98,83,91\n",
+            "83,94,89,80\n",
+            "105,89,93,104,89,95,86\n",
+            "1530.0\n",
+            "ti2/k= 137934.45238095237\n",
+            "RSS: 138638.0\n",
+            "CF: 137700.0\n",
+            "SST: 938.0\n",
+            "SSTR: 234.4523809523671\n",
+            "SSE: 703.5476190476329\n",
+            "MSSTR: 117.22619047618355\n",
+            "MSSE: 50.253401360545205\n",
+            "FCAL: 2.3327016142676427\n",
+            "FTAB: 3.739\n"
+          ]
+        }
+      ],
+      "source": [
+        "import numpy as np\n",
+        "import scipy.stats as ss\n",
+        "#tr1=[90,82,79,98,83,91]\n",
+        "#tr2=[83,94,89,80]\n",
+        "#tr3=[105,89,93,104,89,95,86]\n",
+        "k=int(input(\"no.of treatments:\"))\n",
+        "tr=[]\n",
+        "for i in range(k):\n",
+        "  x=[float(x) for x in input().split(',')]\n",
+        "  tr.append(x)\n",
+        "G=0\n",
+        "rss=0\n",
+        "ti=0\n",
+        "N=0\n",
+        "for i in tr:\n",
+        "  G+=sum(i)\n",
+        "  ti+=sum(i)**2/len(i)\n",
+        "  rss+=sum(np.square(i))\n",
+        "  N+=len(i)\n",
+        "print(G)\n",
+        "alpha=0.05\n",
+        "print(\"ti2/k=\",ti)\n",
+        "print(\"RSS:\",rss)\n",
+        "cf=G**2/N\n",
+        "print(\"CF:\",cf)\n",
+        "sst=rss-cf\n",
+        "print(\"SST:\",sst)\n",
+        "sstr=ti-cf\n",
+        "print(\"SSTR:\",sstr)\n",
+        "sse=sst-sstr\n",
+        "print(\"SSE:\",sse)\n",
+        "msstr=sstr/(k-1)\n",
+        "print(\"MSSTR:\",msstr)\n",
+        "msse=sse/(N-k)\n",
+        "print(\"MSSE:\",msse)\n",
+        "fcal=msstr/msse\n",
+        "print(\"FCAL:\",fcal)\n",
+        "if(fcal<1):\n",
+        "  fcal=1/fcal\n",
+        "ftab=round((ss.f.ppf(1-alpha,k-1,N-k)),3)\n",
+        "print(\"FTAB:\",ftab)\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [],
+      "metadata": {
+        "id": "HK0I3ZDzNJAB"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import numpy as np\n",
+        "import scipy.stats as ss\n",
+        "tr=[[75,73,59,69,84],[83,72,56,70,92],[86,61,53,72,88],[73,67,62,79,95]]\n",
+        "b=[[75,83,86,73],[73,72,61,67],[59,56,53,62],[69,70,72,79],[84,92,88,95]]\n",
+        "k=len(tr)\n",
+        "h=len(b)\n",
+        "tr=np.array(tr)\n",
+        "b=np.array(b)\n",
+        "ti,bi=[],[]\n",
+        "for i in tr:\n",
+        "   tsqr=np.sum(i)**2\n",
+        "   ti.append(tsqr)\n",
+        "print(\"ti2:\",ti)\n",
+        "bj=0\n",
+        "for j in b:\n",
+        "  bsqr=np.sum(j)*np.sum(j)\n",
+        "  bi.append(bsqr)\n",
+        "print(\"bj2:\",bi)\n",
+        "ti_tot=np.sum(ti)\n",
+        "bi_tot=np.sum(bi)\n",
+        "print(\"ti_tot:\",ti_tot)\n",
+        "print(\"bj_tot:\",bi_tot)\n",
+        "rss=np.sum(tr**2)\n",
+        "print(\"RSS:\",rss)\n",
+        "G=np.sum(tr)\n",
+        "print(\"G=\",G)\n",
+        "cf=G**2/(len(tr[0])*len(tr))\n",
+        "print(\"CF:\",cf)\n",
+        "sst=rss-cf\n",
+        "print(\"SST:\",sst)\n",
+        "sstr=(ti_tot/h)-cf\n",
+        "print(\"SSTR:\",sstr)\n",
+        "ssb=(bi_tot/k)-cf\n",
+        "print(\"SSB:\",ssb)\n",
+        "sse=round((sst-sstr-ssb),3)\n",
+        "print(\"SSE:\",sse)\n",
+        "msstr=round(sstr/(k-1),3)\n",
+        "print(\"MSSTR:\",msstr)\n",
+        "mssb=round(ssb/(h-1),3)\n",
+        "print(\"MSSB:\",mssb)\n",
+        "msse=round(sse/((k-1)*(h-1)),3)\n",
+        "print(\"MSSE:\",msse)\n",
+        "oftr=round(msstr/msse,3)\n",
+        "print(\"FTR:\",oftr)\n",
+        "fb=round(mssb/msse,3)\n",
+        "print(\"FB:\",fb)\n",
+        "if(ftr<1):\n",
+        "  ftr=1/ftr\n",
+        "nftr=round(ftr,3)\n",
+        "print(\"FTR:\",nftr)\n",
+        "alpha=0.05\n",
+        "tvtr=ss.f.ppf(1-alpha,12,3)\n",
+        "tvb=ss.f.ppf(1-alpha,4,12)\n",
+        "print(\"tab_valtr:\",tvtr)\n",
+        "print(\"tab_valb:\",tvb)\n",
+        "if(nftr<tvtr):\n",
+        "  print(\"Accept H0 for treatment\")\n",
+        "else:\n",
+        "  print(\"Reject H0 for treatment\")\n",
+        "if(fb<tvb):\n",
+        "  print(\"Accept H0 for block\")\n",
+        "else:\n",
+        "  print(\"Reject H0 for block\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Qp164sssQaXF",
+        "outputId": "e43c020c-0049-485f-d07f-fb4a8faef89a"
+      },
+      "execution_count": 95,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "ti2: [129600, 139129, 129600, 141376]\n",
+            "bj2: [100489, 74529, 52900, 84100, 128881]\n",
+            "ti_tot: 539705\n",
+            "bj_tot: 440899\n",
+            "RSS: 110607\n",
+            "G= 1469\n",
+            "CF: 107898.05\n",
+            "SST: 2708.949999999997\n",
+            "SSTR: 42.94999999999709\n",
+            "SSB: 2326.699999999997\n",
+            "SSE: 339.3\n",
+            "MSSTR: 14.317\n",
+            "MSSB: 581.675\n",
+            "MSSE: 28.275\n",
+            "FTR: 0.506\n",
+            "FB: 20.572\n",
+            "FTR: 1.976\n",
+            "tab_valtr: 8.744640661465281\n",
+            "tab_valb: 3.259166726901249\n",
+            "Accept H0 for treatment\n",
+            "Reject H0 for block\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
