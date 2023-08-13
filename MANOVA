@@ -1,0 +1,68 @@
+import numpy as np
+import scipy.stats as ss
+tr1=np.array([[9,6,9],[3,2,7]])
+tr2=np.array([[0,2],[4,0]])
+tr3=np.array([[3,1,2],[8,9,7]])
+def mean(x):
+    return sum(x)/len(x)
+def det(a):
+    if(len(a)==2):
+        arr=a[0][0]*a[1][1]-a[1][0]*a[0][1]
+    else:
+        arr=a[0][0]*((a[1][1]*a[2][2])-(a[2][1]*a[1][2]))-(a[0][1]*((a[1][0]*a[2][2])-(a[2][0]*a[1][2])))+(a[0][2]*((a[1][0]*a[2][1])-(a[2][0]*a[1][1])))
+    return arr
+yibar1=np.mean(tr1,axis=1)
+yibar2=np.mean(tr2,axis=1)
+yibar3=np.mean(tr3,axis=1)
+print(yibar3)
+yibar=np.array([yibar1,yibar2,yibar3])
+print("yibar:",yibar)
+ybar1=np.array([9,6,9,0,2,3,1,2])
+print("ybar1:",ybar1)
+ybar2=np.array([3,2,7,4,0,8,9,7])
+print("ybar2:",ybar2)
+y2bar1=np.mean(ybar1)
+y2bar2=np.mean(ybar2)
+y2bar=np.array([y2bar1,y2bar2])
+print("y2bar:",y2bar)
+print("For y1:")
+sst1=np.sum((ybar1-y2bar1)**2)
+print("SST:",sst1)
+sse1=np.sum((tr1[0]-yibar[0][0])**2)+np.sum((tr2[0]-yibar[1][0])**2)+np.sum((tr3[0]-yibar[2][0])**2)
+print("SSE:",sse1)
+sstr1=sst1-sse1
+print("SSTR:",sstr1)
+print("For y2:")
+sst2=np.sum((ybar2-y2bar2)**2)
+print("SST:",sst2)
+sse2=np.sum((tr1[1]-yibar[0][1])**2)+np.sum((tr2[1]-yibar[1][1])**2)+np.sum((tr3[1]-yibar[2][1])**2)
+print("SSE:",sse2)
+sstr2=sst2-sse2
+print("SSTR:",sstr2)
+print("For crossproduct of y1 & y2")
+sst12=np.sum(ybar1*ybar2-y2bar1*y2bar2)
+print("SST:",sst12)
+sse12=np.sum(tr1[0]*tr1[1]-yibar[0][0]*yibar[0][1])+np.sum(tr2[0]*tr2[1]-yibar[1][0]*yibar[1][1])+np.sum(tr3[0]*tr3[1]-yibar[2][0]*yibar[2][1])
+print("SSE:",sse12)
+sstr12=sst12-sse12
+print("SSTR:",sstr12)
+b=np.array([[sstr1,sstr12],[sstr12,sstr2]])
+print("B:",b)
+w=np.array([[sse1,sse12],[sse12,sse2]])
+print("W:",w)
+t=np.array([[sst1,sst12],[sst12,sst2]])
+print("T:",t)
+wilks=round(det(w)/det(t),3)
+print("WILKS:",wilks)
+k=3
+n=8
+p=2
+alpha=0.05
+fcal=((n-k-1)/(k-1))*((1-np.sqrt(wilks))/np.sqrt(wilks))
+print("FCAL:",fcal)
+ftab=ss.f.ppf(1-alpha,4,8)
+print("FTAB:",ftab)
+if(fcal<ftab):
+    print("Accept H0")
+else:
+    print("Reject H0")
