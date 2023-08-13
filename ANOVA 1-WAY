@@ -1,0 +1,39 @@
+import numpy as np
+import scipy.stats as ss
+#tr1=[90,82,79,98,83,91]
+#tr2=[83,94,89,80]
+#tr3=[105,89,93,104,89,95,86]
+t=int(input("no.of treatments:"))
+b=int(input(".no.of blocks:"))
+data=[[int(input()) for j in range(b)]for i in range(t)]
+G=0
+rss=0
+ti=0
+N=0
+for i in tr:
+  G+=sum(i)
+  ti+=sum(i)**2
+  rss+=sum(np.square(i))
+  N+=len(i)
+print(G)
+alpha=0.05
+print("ti2=",ti)
+print("RSS:",rss)
+cf=G**2/N
+print("CF:",cf)
+sst=rss-cf
+print("SST:",sst)
+sstr=ti-cf
+print("SSTR:",sstr)
+sse=sst-sstr
+print("SSE:",sse)
+msstr=sstr/(k-1)
+print("MSSTR:",msstr)
+msse=sse/(N-k)
+print("MSSE:",msse)
+fcal=msstr/msse
+print("FCAL:",fcal)
+if(fcal<1):
+  fcal=1/fcal
+ftab=round((ss.f.ppf(1-alpha,k-1,N-k)),3)
+print("FTAB:",ftab)
