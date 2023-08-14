@@ -1,0 +1,96 @@
+#LINEAR DISCRIMINANT ANALYSIS
+
+import numpy as np
+import math
+x=np.array([[4,2],[2,4],[2,3],[3,6],[4,4],[9,10],[6,8],[9,5],[8,7],[10,8]])
+x1=np.array([[4,2],[2,4],[2,3],[3,6],[4,4]])
+x2=np.array([[9,10],[6,8],[9,5],[8,7],[10,8]])
+mu=np.mean(x,axis=0)
+print("MU:",mu)
+mu1=np.mean(x1,axis=0)
+mu1=np.array([mu1])
+print("MU1:",mu1)
+mu2=np.mean(x2,axis=0)
+mu2=np.array([mu2])
+print("MU2",mu2)
+m=np.array(x-mu)
+print("x-mu:",m)
+def transpose(a):
+    res=np.zeros((2,10),dtype="float")
+    for i in range(len(a)):
+        for j in range(len(a[0])):
+            res[j][i]=a[i][j]
+    return res
+def mul(m1,m2):
+    res=np.zeros([m1.shape[0],m2.shape[1]],dtype="float")
+    for i in range(len(m1)):
+        for j in range(len(m2[0])):
+            for k in range(len(m2)):
+                res[i][j]+=m1[i][k]*m2[k][j]
+    return res
+def cof(a):
+    arr=np.zeros((2,2),dtype="float")
+    if(len(a)==2):
+        arr[0][0]=a[1][1]
+        arr[1][1]=a[0][0]
+        arr[0][1]=-1*a[0][1]
+        arr[1][0]=-1*a[1][0]
+    else:
+        arr[0][0]=a[1][1]*a[2][2]-(a[1][2]*a[2][1])
+        arr[0][1]=-1*(a[1][0]*a[2][2]-(a[1][2]*a[2][0]))
+        arr[0][2]=a[1][0]*a[2][1]-(a[1][1]*a[2][0])
+        arr[1][0]=-1*(a[0][1]*a[2][2]-(a[2][1]*a[0][2]))
+        arr[1][1]=a[0][0]*a[2][2]-(a[2][0]*a[0][2])
+        arr[1][2]=-1*(a[0][0]*a[2][1]-(a[2][0]*a[0][1]))
+        arr[2][0]=a[0][1]*a[1][2]-(a[1][1]*a[0][2])
+        arr[2][1]=-1*(a[0][0]*a[1][2]-(a[1][0]*a[0][2]))
+        arr[2][2]=a[0][0]*a[1][1]-(a[1][0]*a[0][1])
+    return arr
+def det(a):
+    if(len(a)==2):
+        arr=a[0][0]*a[1][1]-a[1][0]*a[0][1]
+    else:
+        arr=a[0][0]*((a[1][1]*a[2][2])-(a[2][1]*a[1][2]))-(a[0][1]*((a[1][0]*a[2][2])-(a[2][0]*a[1][2])))+(a[0][2]*((a[1][0]*a[2][1])-(a[2][0]*a[1][1])))
+    return arr
+mt=transpose(m)
+print("Trans of x-mu:",mt)
+mtm=np.zeros((2,2),dtype="float")
+mtm=mul(mt,m)
+print("Mul of x_trans & x:",mtm)
+mtm=mtm/10
+print("Pooled cov matrix:",mtm)
+cinv=cof(mtm)/det(mtm)
+print("inv of c:",np.round(cinv,4))
+xk_trans=np.array([[5],[6]])
+f1_term1=np.zeros((1,2),dtype="float")
+f1_term11=mul(mu1,cinv)
+print("f1_term11:",f1_term11)
+f1_term12=np.zeros((1,1),dtype="float")
+f1_term12=mul(f1_term11,xk_trans)
+print("f1_term1:",f1_term12)
+mu1_trans=np.array([[3],[3.8]])
+mu2_trans=np.array([[8.4],[7.6]])
+f1_term2=mul(f1_term11,mu1_trans)
+f1_term2=0.5*f1_term2
+print("f1_term2:",f1_term2)
+f1_term3=math.log(5/10)
+print("f1_term3:",np.round(f1_term3,4))
+f1=f1_term3-f1_term2+f1_term12
+print("f1:",f1)
+f2_term11=np.zeros((1,2),dtype="float")
+f2_term11=mul(mu2,cinv)
+print("f2_term11:",f2_term11)
+f2_term12=np.zeros((1,1),dtype="float")
+f2_term12=mul(f2_term11,xk_trans)
+print("f2_term1:",f2_term12)
+f2_term21=mul(f2_term11,mu2_trans)
+f2_term2=0.5*f2_term21
+print("f2_term2:",f2_term2)
+f2_term3=math.log(5/10)
+print("f2_term3:",f2_term3)
+f2=f2_term3-f2_term2+f2_term12
+print("f2:",f2)
+if(f1>f2):
+    print("xk moves to f1 category")
+else:
+    print("xk moves to f2 category")
