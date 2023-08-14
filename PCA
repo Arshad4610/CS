@@ -1,0 +1,60 @@
+#PRINCIPAL COMPONENT OF ANALYSIS
+import numpy as np
+def transpose(a):
+    res=np.zeros((3,5),dtype="float")
+    for i in range(len(a)):
+        for j in range(len(a[0])):
+            res[j][i]=a[i][j]
+    return res
+def mul(m1,m2):
+    res=np.zeros([m1.shape[0],m2.shape[1]],dtype="float")
+    for i in range(len(m1)):
+        for j in range(len(m2[0])):
+            for k in range(len(m2)):
+                res[i][j]+=m1[i][k]*m2[k][j]
+    return res
+x=np.array([[90,60,90],[90,90,30],[60,60,60],[60,60,90],[30,30,30]])
+print("X:",x)
+mu=np.mean(x,axis=0)
+print("MU:",mu)
+m=np.array(x-mu)
+print("X-MU:",m)
+m_trans=transpose(m)
+print("trans of x-mu:",m_trans)
+n=len(x)
+c=np.zeros((3,3),dtype="float")
+c=mul(m_trans,m)
+c=c/n
+print("Pooled cov matrix:",c)
+eva,eve=np.linalg.eig(c)
+eve=transpose(eve)
+idx=np.argsort(eva)[::-1]
+eva,eve=eva[idx],eve[idx]
+print("eigen values:",eva)
+print("Eigen vectors:",eve)
+k=len(x[0])
+th=95
+sigeig=np.sum(eva)
+z=[]
+for i in range(k):
+    val=(sum(eva[:i+1]/sigeig))*100
+    z.append(eve[i])
+    if val>=th:
+        break
+z=np.array(z)
+z*=-1
+print("Eigen vectors of pca:",z)
+print(f"z1={round(z[0][0],4)}x1+{round(z[0][1],4)}x2+{round(z[0][2],4)}x3")
+print(f"z2={round(z[1][0],4)}x1+{round(z[1][1],4)}x2+{round(z[1][2],4)}x3")
+print("PCA for z1=")
+print(0.6558*x[0][0]+0.4292*x[0][1]+0.6211*x[0][2])
+print(0.6558*x[1][0]+0.4292*x[1][1]+0.6211*x[1][2])
+print(round(0.6558*x[2][0]+0.4292*x[2][1]+0.6211*x[2][2],4))
+print(round(0.6558*x[3][0]+0.4292*x[3][1]+0.6211*x[3][2],4))
+print(round(0.6558*x[4][0]+0.4292*x[4][1]+0.6211*x[4][2],4))
+print("PCA for z2=")
+print(round(0.386*x[0][0]+0.5164*x[0][1]+-0.7644*x[0][2],4))
+print(round(0.386*x[1][0]+0.5164*x[1][1]+-0.7644*x[1][2],4))
+print(round(0.386*x[2][0]+0.5164*x[2][1]+-0.7644*x[2][2],4))
+print(round(0.386*x[3][0]+0.5164*x[3][1]+-0.7644*x[3][2],4))
+print(round(0.386*x[4][0]+0.5164*x[4][1]+-0.7644*x[4][2],4))
