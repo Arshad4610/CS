@@ -1,0 +1,29 @@
+import numpy as np
+import matplotlib.pyplot as plt
+def mean(x):
+    return sum(x)/len(x)
+x=np.array([1,2,3,4,6,8])
+y=np.array([2.4,3,3.6,4,5,6])
+sumx=sum(x)
+sumy=sum(y)
+sumxx=sum(x*x)
+sumxy=sum(x*y)
+n=len(x)
+print("n",n)
+m=(n*sumxy-sumx*sumy)/(n*sumxx-(sumx*sumx))
+print("m",m)
+c=(sumy-m*sumx)/n
+yi=[]
+for i in range(0,n):
+    yi.append(m*x[i]+c)
+print("yi=",yi)
+sst=0
+sse=0
+ybar=mean(y)
+for i in range(0,n):
+    sst+=(y[i]-ybar)**2
+    sse+=(y[i]-yi[i])**2
+print(1-(sse/sst))
+plt.scatter(x,y)
+plt.plot(x,yi)
+plt.show()
